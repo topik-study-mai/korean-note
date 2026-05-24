@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나만의 한국어 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pink-50: #FBEAF0;
+    --pink-100: #F4C0D1;
+    --pink-200: #ED93B1;
+    --pink-300: #E06E99;
+    --pink-400: #D4537E;
+    --pink-500: #BE3F6A;
+    --pink-600: #993556;
+    --pink-800: #72243E;
+    --pink-900: #4B1528;
+    --bg: #fff9fb;
+    --surface: #ffffff;
+    --border: #f4c0d1;
+    --text: #2c1018;
+    --text-muted: #9e6478;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 16px rgba(212,83,126,0.08);
+  }
+
+  html { font-size: 15px; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #fbeaf0 0%, #fce8f2 50%, #f8e0ee 100%);
+    border-bottom: 1px solid var(--pink-100);
+    padding: 0 1.5rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-top {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 0 10px;
+  }
+  .logo {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--pink-400);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(212,83,126,0.3);
+  }
+  .title-wrap h1 {
+    font-family: 'Gaegu', cursive;
+    font-size: 2.1rem; font-weight: 700;
+    color: var(--pink-800); letter-spacing: .02em;
+  }
+  .title-wrap p { font-size: 0.75rem; color: var(--pink-400); margin-top: 1px; }
+
+  .tabs {
+    display: flex; gap: 0; overflow-x: auto;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 10px 14px; font-size: 0.8rem; cursor: pointer;
+    border: none; background: transparent;
+    color: var(--pink-300); border-bottom: 2.5px solid transparent;
+    transition: all .18s; white-space: nowrap;
+    display: flex; align-items: center; gap: 5px;
+    font-family: inherit;
+  }
+  .tab.active { color: var(--pink-600); border-bottom-color: var(--pink-500); font-weight: 500; }
+  .tab:hover:not(.active) { color: var(--pink-500); }
+  .tab svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── CONTENT ── */
+  .content { max-width: 680px; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: .9rem;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: .8rem; font-weight: 500; color: var(--pink-600);
+    margin-bottom: .85rem; display: flex; align-items: center; gap: 6px;
+  }
+  .card-title svg { width: 14px; height: 14px; color: var(--pink-400); }
+
+  /* ── FORM ── */
+  .type-pills { display: flex; gap: 6px; margin-bottom: .85rem; flex-wrap: wrap; }
+  .pill {
+    padding: 4px 13px; border-radius: 20px; font-size: .75rem;
+    cursor: pointer; border: 1px solid var(--pink-100);
+    background: var(--bg); color: var(--pink-600);
+    transition: all .15s; font-family: inherit;
+  }
+  .pill.active { background: var(--pink-400); color: #fff; border-color: var(--pink-400); }
+
+  .field-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  input[type=text], textarea {
+    flex: 1; font-size: .9rem; padding: 9px 12px;
+    border: 1px solid var(--pink-100); border-radius: var(--radius-sm);
+    background: var(--bg); color: var(--text);
+    outline: none; font-family: inherit;
+    transition: border-color .15s;
+  }
+  input[type=text]:focus, textarea:focus { border-color: var(--pink-300); }
+  textarea { resize: none; height: 58px; line-height: 1.5; }
+
+  .btn-primary {
+    background: var(--pink-400); color: #fff;
+    border: none; border-radius: var(--radius-sm);
+    padding: 9px 16px; font-size: .82rem; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: inherit; font-weight: 500;
+    transition: background .15s; white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--pink-600); }
+  .btn-ghost {
+    background: transparent; color: var(--pink-400);
+    border: 1px solid var(--pink-200); border-radius: var(--radius-sm);
+    padding: 9px 14px; font-size: .82rem; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: inherit; transition: all .15s;
+  }
+  .btn-ghost:hover { background: var(--pink-50); }
+  .btn-row { display: flex; gap: 8px; justify-content: flex-end; }
+
+  .btn-voice {
+    background: var(--pink-50); color: var(--pink-600);
+    border: 1px solid var(--pink-200); border-radius: var(--radius-sm);
+    padding: 9px 11px; cursor: pointer; display: flex; align-items: center; gap: 4px;
+    font-size: .78rem; font-family: inherit; transition: all .15s; white-space: nowrap;
+  }
+  .btn-voice svg { width: 16px; height: 16px; }
+  .btn-voice.recording { background: var(--pink-400); color: #fff; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.55} }
+
+  /* ── ENTRY CARDS ── */
+  .entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    margin-bottom: .6rem;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+    box-shadow: var(--shadow);
+  }
+  .entry-card:hover { border-color: var(--pink-300); }
+  .entry-card.open { border-color: var(--pink-300); }
+
+  .ec-top { display: flex; align-items: center; gap: 8px; }
+  .ec-kor {
+    font-family: 'Gaegu', cursive;
+    font-size: 1.3rem; color: var(--pink-800); font-weight: 700;
+  }
+  .tag {
+    font-size: .7rem; padding: 2px 9px; border-radius: 12px;
+    background: var(--pink-50); color: var(--pink-600);
+    border: 1px solid var(--pink-100);
+  }
+  .ec-date { font-size: .7rem; color: var(--pink-200); margin-left: auto; }
+  .ec-jp { font-size: .82rem; color: var(--text-muted); margin-top: 4px; }
+  .ec-no-jp { font-size: .72rem; color: var(--pink-200); margin-top: 4px; }
+
+  .ec-body {
+    display: none; margin-top: .75rem;
+    border-top: 1px solid var(--pink-50); padding-top: .75rem;
+  }
+  .ec-body.open { display: block; }
+  .ec-label { font-size: .7rem; color: var(--pink-400); font-weight: 500; margin-bottom: 3px; display: block; }
+  .ec-text { font-size: .82rem; color: var(--text); line-height: 1.6; }
+  .ec-example { font-size: .78rem; color: var(--text-muted); margin-top: 3px; }
+
+  .ec-actions { display: flex; gap: 6px; margin-top: .85rem; flex-wrap: wrap; }
+  .btn-xs {
+    padding: 5px 10px; font-size: .72rem; border-radius: var(--radius-sm);
+    cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+    border: none; font-family: inherit; transition: all .15s;
+  }
+  .btn-xs svg { width: 12px; height: 12px; }
+  .btn-xs-edit { background: var(--pink-50); color: var(--pink-600); }
+  .btn-xs-edit:hover { background: var(--pink-100); }
+  .btn-xs-quiz { background: var(--pink-100); color: var(--pink-800); }
+  .btn-xs-quiz:hover { background: var(--pink-200); }
+  .btn-xs-del { background: transparent; color: #bbb; }
+  .btn-xs-del:hover { color: #e24b4a; }
+
+  .edit-input {
+    width: 100%; font-size: .82rem; padding: 6px 9px;
+    border: 1px solid var(--pink-200); border-radius: var(--radius-sm);
+    background: var(--bg); color: var(--text);
+    margin-bottom: 6px; outline: none; font-family: inherit;
+  }
+
+  /* ── SEARCH ── */
+  .search-wrap { position: relative; margin-bottom: 1rem; }
+  .search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--pink-300); pointer-events: none; }
+  .search-wrap input { padding-left: 34px; width: 100%; }
+
+  /* ── TOC ── */
+  .stats-row { display: flex; gap: 8px; margin-bottom: 1.1rem; }
+  .stat { flex: 1; background: var(--pink-50); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; }
+  .stat-n { font-size: 1.3rem; font-weight: 600; color: var(--pink-600); }
+  .stat-l { font-size: .68rem; color: var(--pink-400); }
+
+  .toc-group { margin-bottom: 1.1rem; }
+  .toc-header { font-size: .73rem; font-weight: 500; color: var(--pink-400); padding: 4px 0; border-bottom: 1px solid var(--pink-100); margin-bottom: .4rem; }
+  .toc-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 6px; border-radius: var(--radius-sm);
+    cursor: pointer; transition: background .12s; font-size: .9rem;
+  }
+  .toc-row:hover { background: var(--pink-50); }
+  .toc-kor { font-family: 'Gaegu', cursive; font-weight: 700; color: var(--pink-800); min-width: 90px; }
+  .toc-jp { font-size: .78rem; color: var(--text-muted); }
+  .toc-date { font-size: .68rem; color: var(--pink-200); margin-left: auto; }
+
+  /* ── QUIZ ── */
+  .quiz-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow); }
+  .quiz-word { font-family: 'Gaegu', cursive; font-size: 1.7rem; font-weight: 700; color: var(--pink-800); margin-bottom: 1rem; }
+  .quiz-prog { font-size: .72rem; color: var(--pink-400); margin-bottom: .6rem; }
+  .quiz-q { font-size: .9rem; color: var(--pink-900); font-weight: 500; line-height: 1.6; margin-bottom: .85rem; }
+  .quiz-ans-row { display: flex; gap: 8px; }
+  .quiz-result { margin-top: .75rem; padding: .75rem; border-radius: var(--radius-sm); font-size: .82rem; line-height: 1.6; }
+  .quiz-result.ok { background: #eaf3de; color: #3b6d11; }
+  .quiz-result.ng { background: var(--pink-50); color: var(--pink-800); }
+  .quiz-log-item { font-size: .72rem; padding: 3px 0; border-bottom: 1px solid var(--pink-50); display: flex; gap: 8px; }
+  .q-ok { color: #3b6d11; } .q-ng { color: var(--pink-600); }
+
+  /* ── EXPORT ── */
+  .export-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: .85rem 1rem; border: 1px solid var(--pink-100);
+    border-radius: var(--radius-sm); cursor: pointer;
+    transition: background .15s; margin-bottom: .6rem;
+    background: var(--surface);
+  }
+  .export-row:hover { background: var(--pink-50); }
+  .export-icon {
+    width: 38px; height: 38px; border-radius: var(--radius-sm);
+    background: var(--pink-50); display: flex; align-items: center; justify-content: center;
+    color: var(--pink-400); flex-shrink: 0;
+  }
+  .export-icon svg { width: 20px; height: 20px; }
+  .export-info strong { font-size: .82rem; font-weight: 500; color: var(--pink-800); display: block; }
+  .export-info span { font-size: .72rem; color: var(--text-muted); }
+
+  .import-drop {
+    border: 2px dashed var(--pink-200); border-radius: var(--radius-sm);
+    padding: 1.75rem; text-align: center; color: var(--pink-400);
+    font-size: .82rem; cursor: pointer; transition: background .15s; margin-top: 6px;
+  }
+  .import-drop:hover { background: var(--pink-50); }
+  .import-drop svg { width: 28px; height: 28px; display: block; margin: 0 auto .5rem; color: var(--pink-200); }
+
+  /* ── EMPTY / SPINNER ── */
+  .empty { text-align: center; color: var(--text-muted); font-size: .85rem; padding: 2.5rem 0; }
+  .empty svg { width: 36px; height: 36px; color: var(--pink-100); display: block; margin: 0 auto .6rem; }
+
+  .spin {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid var(--pink-100); border-top-color: var(--pink-400);
+    border-radius: 50%; animation: spin .6s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RECENT LABEL ── */
+  .section-label { font-size: .72rem; color: var(--pink-400); font-weight: 500; margin-bottom: .5rem; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(12px);
+    background: var(--pink-600); color: #fff;
+    padding: 8px 20px; border-radius: 20px; font-size: .8rem;
+    opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; z-index: 999;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">📖</div>
+    <div class="title-wrap">
+      <h1>나만의 한국어 노트</h1>
+      <p id="count-label">0 単語・文法</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('add')" id="tab-add">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      追加
+    </button>
+    <button class="tab" onclick="showTab('list')" id="tab-list">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+      一覧・検索
+    </button>
+    <button class="tab" onclick="showTab('toc')" id="tab-toc">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      もくじ
+    </button>
+    <button class="tab" onclick="showTab('quiz')" id="tab-quiz">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/></svg>
+      クイズ
+    </button>
+    <button class="tab" onclick="showTab('export')" id="tab-export">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      保存
+    </button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ADD -->
+  <div id="pane-add" class="pane active">
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        新しい単語・文法を追加
+      </div>
+      <div class="type-pills">
+        <button class="pill active" onclick="setType('単語')">単語</button>
+        <button class="pill" onclick="setType('文法')">文法</button>
+        <button class="pill" onclick="setType('表現')">表現</button>
+        <button class="pill" onclick="setType('その他')">その他</button>
+      </div>
+      <div class="field-row">
+        <input type="text" id="inp-kor" placeholder="韓国語（例：사랑해）" style="font-size:1.05rem;">
+        <button class="btn-voice" id="voice-btn" onclick="toggleVoice()" title="音声入力（韓国語）">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+      </div>
+      <div class="field-row">
+        <input type="text" id="inp-jp" placeholder="日本語の意味（後で追加もOK）">
+      </div>
+      <div class="field-row">
+        <textarea id="inp-memo" placeholder="メモ・使い方のコツ（省略可）"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-ghost" onclick="clearForm()">クリア</button>
+        <button class="btn-primary" onclick="addEntry()">追加する ✓</button>
+      </div>
+    </div>
+    <div id="recent-wrap"></div>
+  </div>
+
+  <!-- LIST -->
+  <div id="pane-list" class="pane">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search-inp" placeholder="韓国語・日本語・メモで検索…" oninput="renderList()">
+    </div>
+    <div id="list-body"></div>
+  </div>
+
+  <!-- TOC -->
+  <div id="pane-toc" class="pane">
+    <div id="toc-body"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="pane-quiz" class="pane">
+    <div id="quiz-body"></div>
+  </div>
+
+  <!-- EXPORT -->
+  <div id="pane-export" class="pane">
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        データを保存・エクスポート
+      </div>
+      <div class="export-row" onclick="exportJSON()">
+        <div class="export-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div class="export-info"><strong>JSONで保存</strong><span>全データをバックアップ。後でインポートして復元できます</span></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--pink-200);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="export-row" onclick="exportCSV()">
+        <div class="export-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg></div>
+        <div class="export-info"><strong>CSVで保存</strong><span>Excel・スプレッドシートで開けます</span></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--pink-200);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="export-row" onclick="exportText()">
+        <div class="export-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <div class="export-info"><strong>テキストで保存</strong><span>見やすい一覧。印刷にも使えます</span></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--pink-200);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        インポート（復元）
+      </div>
+      <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:.75rem;">以前保存したJSONファイルを読み込めます。重複はスキップされます。</p>
+      <div class="import-drop" onclick="document.getElementById('file-input').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="12"/><line x1="15" y1="15" x2="12" y2="12"/></svg>
+        ここをタップしてJSONファイルを選択
+      </div>
+      <input type="file" id="file-input" accept=".json" style="display:none" onchange="importJSON(event)">
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<div id="toast"></div>
+
+<script>
+const KEY = 'kr_notebook_v1';
+let entries = [], currentType = '単語', recognition = null, isRecording = false;
+let quizState = { word: null, qIdx: 0, questions: [], answers: [] };
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+function load() {
+  try { const r = localStorage.getItem(KEY); if (r) entries = JSON.parse(r); } catch(e) { entries = []; }
+  updateCount();
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(entries)); } catch(e) {}
+  updateCount();
+}
+function updateCount() {
+  const el = document.getElementById('count-label');
+  if (el) el.textContent = entries.length + ' 単語・文法';
+}
+function setType(t) {
+  currentType = t;
+  document.querySelectorAll('.type-pills .pill').forEach(p => p.classList.toggle('active', p.textContent.trim() === t));
+}
+function clearForm() {
+  ['inp-kor','inp-jp','inp-memo'].forEach(id => document.getElementById(id).value = '');
+}
+function addEntry() {
+  const kor = document.getElementById('inp-kor').value.trim();
+  if (!kor) { document.getElementById('inp-kor').focus(); return; }
+  entries.unshift({
+    id: Date.now(), kor,
+    jp: document.getElementById('inp-jp').value.trim(),
+    memo: document.getElementById('inp-memo').value.trim(),
+    type: currentType,
+    date: new Date().toLocaleDateString('ja-JP',{month:'2-digit',day:'2-digit'}),
+    quizLog: [], examples: []
+  });
+  save(); clearForm(); renderRecent();
+  toast('✨ 追加しました！'); showTab('list');
+}
+
+function showTab(name) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pane-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name==='list') renderList();
+  if (name==='toc') renderToc();
+  if (name==='quiz') renderQuizStart();
+  if (name==='add') renderRecent();
+}
+
+function renderRecent() {
+  const el = document.getElementById('recent-wrap');
+  if (!el || !entries.length) { if(el) el.innerHTML=''; return; }
+  el.innerHTML = '<p class="section-label">最近追加した単語</p>' + entries.slice(0,3).map(entryHTML).join('');
+}
+function renderList() {
+  const q = (document.getElementById('search-inp')||{}).value||'';
+  const filtered = q ? entries.filter(e=>e.kor.includes(q)||(e.jp&&e.jp.includes(q))||(e.memo&&e.memo.includes(q))) : entries;
+  const el = document.getElementById('list-body');
+  if (!filtered.length) {
+    el.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'+(q?'「'+q+'」は見つかりませんでした':'まだ単語がありません')+'</div>'; return;
+  }
+  el.innerHTML = filtered.map(entryHTML).join('');
+}
+
+function entryHTML(e) {
+  const exHTML = (e.examples||[]).map(x=>'<p class="ec-example">💬 '+x+'</p>').join('');
+  const qHTML = (e.quizLog||[]).slice(-3).map(q=>'<div class="quiz-log-item"><span class="'+(q.correct?'q-ok':'q-ng')+'">'+(q.correct?'○':'✕')+'</span><span>'+q.q+'</span></div>').join('');
+  return `<div class="entry-card" id="ec-${e.id}" onclick="toggleEC(${e.id})">
+    <div class="ec-top">
+      <span class="ec-kor">${e.kor}</span>
+      <span class="tag">${e.type}</span>
+      <span class="ec-date">${e.date}</span>
+    </div>
+    ${e.jp?'<p class="ec-jp">'+e.jp+'</p>':'<p class="ec-no-jp">意味未入力</p>'}
+    <div class="ec-body" id="ecb-${e.id}">
+      ${e.memo?'<span class="ec-label">メモ</span><p class="ec-text">'+e.memo+'</p>':''}
+      ${exHTML?'<span class="ec-label" style="margin-top:8px">例文</span>'+exHTML:''}
+      ${qHTML?'<span class="ec-label" style="margin-top:8px">クイズ履歴</span>'+qHTML:''}
+      <div id="ef-${e.id}"></div>
+      <div class="ec-actions">
+        <button class="btn-xs btn-xs-edit" onclick="startEdit(event,${e.id})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 編集
+        </button>
+        <button class="btn-xs btn-xs-quiz" onclick="startWordQuiz(event,${e.id})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/></svg> クイズ
+        </button>
+        <button class="btn-xs btn-xs-del" onclick="deleteEntry(event,${e.id})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleEC(id) {
+  const b = document.getElementById('ecb-'+id); if(!b) return;
+  const open = b.classList.contains('open');
+  b.classList.toggle('open', !open);
+  document.getElementById('ec-'+id).classList.toggle('open', !open);
+}
+function startEdit(ev, id) {
+  ev.stopPropagation();
+  const e = entries.find(x=>x.id===id); if(!e) return;
+  document.getElementById('ef-'+id).innerHTML = `
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--pink-100)">
+      <input class="edit-input" id="ek-${id}" value="${e.kor}" placeholder="韓国語">
+      <input class="edit-input" id="ej-${id}" value="${e.jp||''}" placeholder="日本語の意味">
+      <textarea class="edit-input" id="em-${id}" style="height:52px">${e.memo||''}</textarea>
+      <input class="edit-input" id="ee-${id}" value="${(e.examples||[]).join(' / ')}" placeholder="例文（/ で区切って複数）">
+      <div style="display:flex;gap:6px;justify-content:flex-end">
+        <button class="btn-xs btn-xs-edit" onclick="saveEdit(event,${id})">✓ 保存</button>
+      </div>
+    </div>`;
+}
+function saveEdit(ev, id) {
+  ev.stopPropagation();
+  const e = entries.find(x=>x.id===id); if(!e) return;
+  e.kor  = document.getElementById('ek-'+id).value.trim()||e.kor;
+  e.jp   = document.getElementById('ej-'+id).value.trim();
+  e.memo = document.getElementById('em-'+id).value.trim();
+  const ex = document.getElementById('ee-'+id).value.trim();
+  e.examples = ex ? ex.split('/').map(s=>s.trim()).filter(Boolean) : [];
+  save(); renderList(); toast('保存しました ✓');
+}
+function deleteEntry(ev, id) {
+  ev.stopPropagation();
+  entries = entries.filter(x=>x.id!==id);
+  save(); renderList();
+}
+
+function renderToc() {
+  const el = document.getElementById('toc-body');
+  if (!entries.length) { el.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>まだ単語がありません</div>'; return; }
+  const byType = {};
+  [...entries].sort((a,b)=>a.kor.localeCompare(b.kor,'ko')).forEach(e => {
+    const t = e.type||'その他'; if(!byType[t])byType[t]=[]; byType[t].push(e);
+  });
+  el.innerHTML = `<div class="stats-row">
+    <div class="stat"><div class="stat-n">${entries.length}</div><div class="stat-l">合計</div></div>
+    <div class="stat"><div class="stat-n">${entries.filter(e=>e.type==='単語').length}</div><div class="stat-l">単語</div></div>
+    <div class="stat"><div class="stat-n">${entries.filter(e=>e.type==='文法').length}</div><div class="stat-l">文法</div></div>
+    <div class="stat"><div class="stat-n">${entries.filter(e=>(e.quizLog||[]).length>0).length}</div><div class="stat-l">クイズ済</div></div>
+  </div>` + Object.entries(byType).map(([type,arr])=>
+    `<div class="toc-group"><div class="toc-header">${type} (${arr.length})</div>
+    ${arr.map(e=>`<div class="toc-row" onclick="jumpTo(${e.id})">
+      <span class="toc-kor">${e.kor}</span>
+      <span class="toc-jp">${e.jp||'意味未入力'}</span>
+      <span class="toc-date">${e.date}</span>
+    </div>`).join('')}</div>`
+  ).join('');
+}
+function jumpTo(id) {
+  showTab('list');
+  setTimeout(()=>{ const c=document.getElementById('ec-'+id); if(c){c.scrollIntoView({behavior:'smooth',block:'center'});toggleEC(id);} },100);
+}
+
+// ── QUIZ ──
+function renderQuizStart() {
+  const el = document.getElementById('quiz-body');
+  if (!entries.length) { el.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/></svg>単語を追加してからクイズを始めましょう！</div>'; return; }
+  startWordQuiz(null, entries[Math.floor(Math.random()*entries.length)].id);
+}
+function startWordQuiz(ev, id, el) {
+  if (ev) ev.stopPropagation();
+  const e = entries.find(x=>x.id===id); if(!e) return;
+  quizState = { word:e, qIdx:0, questions:[], answers:[] };
+  const container = el || document.getElementById('quiz-body');
+  if (!container) { showTab('quiz'); return; }
+  container.innerHTML = `<div class="quiz-card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
+      <span class="quiz-word">${e.kor}</span><span class="tag">${e.type}</span>
+    </div>
+    <div id="qb"></div>
+  </div>`;
+  loadQ(e);
+}
+async function loadQ(e) {
+  const el = document.getElementById('qb'); if(!el) return;
+  if (quizState.qIdx >= 3) { showSummary(e); return; }
+  el.innerHTML = `<p style="font-size:.8rem;color:var(--pink-400);display:flex;align-items:center;gap:6px"><span class="spin"></span> AIが問題を作っています…</p>`;
+  const prev = quizState.questions.map((q,i)=>`Q${i+1}: ${q}`).join('\n');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000,
+        messages:[{role:'user',content:`韓国語の単語「${e.kor}」(${e.jp||'意味不明'})について、日本語で短い例文穴埋め問題か使い方クイズを1問作ってください。問題番号：${quizState.qIdx+1}問目。前の問題：${prev||'なし'}。難易度：自然な会話レベル。形式：問題文のみ（答えなし）。30文字以内。「___」で穴埋め箇所を示す。出力：問題文だけ。`}]
+      })
+    });
+    const d = await res.json(); const q = d.content[0].text.trim();
+    quizState.questions.push(q); showQ(e,q);
+  } catch { el.innerHTML='<p style="color:var(--pink-600);font-size:.8rem">問題の生成に失敗しました。</p>'; }
+}
+function showQ(e,q) {
+  const el = document.getElementById('qb'); if(!el) return;
+  el.innerHTML=`<p class="quiz-prog">問題 ${quizState.qIdx+1} / 3</p>
+    <p class="quiz-q">${q}</p>
+    <div class="quiz-ans-row">
+      <input type="text" id="qa" placeholder="韓国語で答えてください" onkeydown="if(event.key==='Enter')checkA()">
+      <button class="btn-primary" onclick="checkA()">→</button>
+    </div>
+    <div id="qr"></div>`;
+  document.getElementById('qa').focus();
+}
+async function checkA() {
+  const ans=(document.getElementById('qa').value||'').trim(); if(!ans) return;
+  const e=quizState.word, q=quizState.questions[quizState.qIdx];
+  const el=document.getElementById('qr');
+  el.innerHTML=`<p style="font-size:.8rem;color:var(--pink-400);display:flex;align-items:center;gap:6px;margin-top:.5rem"><span class="spin"></span> 採点中…</p>`;
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:`韓国語学習の採点。単語：${e.kor}（${e.jp||''}）。問題：${q}。回答：${ans}。採点基準：意味・文脈が合えば正解。出力形式（JSON）：{"correct":true/false,"feedback":"一言の日本語フィードバック20文字以内","model":"模範解答の韓国語"}。JSONのみ出力。`}]
+      })
+    });
+    const d=await res.json();
+    const r=JSON.parse(d.content[0].text.replace(/```json|```/g,'').trim());
+    quizState.answers.push({q,ans,correct:r.correct,model:r.model});
+    const e2=entries.find(x=>x.id===e.id);
+    if(e2){if(!e2.quizLog)e2.quizLog=[];e2.quizLog.push({q:q.slice(0,30),correct:r.correct,date:new Date().toLocaleDateString('ja-JP',{month:'2-digit',day:'2-digit'})});save();}
+    el.innerHTML=`<div class="quiz-result ${r.correct?'ok':'ng'}">
+      ${r.correct?'✨ 正解！':'💡 惜しい！'} ${r.feedback}
+      ${!r.correct?'<br><span style="font-size:.75rem">模範解答：<b>'+r.model+'</b></span>':''}
+    </div>
+    <div style="margin-top:.75rem">
+      <button class="btn-primary" onclick="nextQ()">${quizState.qIdx<2?'次の問題 →':'結果を見る 🏆'}</button>
+    </div>`;
+  } catch { el.innerHTML='<p style="color:var(--pink-600);font-size:.8rem">採点に失敗しました。</p>'; }
+}
+function nextQ() { quizState.qIdx++; if(quizState.qIdx>=3) showSummary(quizState.word); else loadQ(quizState.word); }
+function showSummary(e) {
+  const el=document.getElementById('qb');
+  const c=quizState.answers.filter(a=>a.correct).length;
+  const msg=c===3?'完璧！すばらしい🌸':c>=2?'もう少し！':'練習が必要かも💪';
+  el.innerHTML=`<div style="text-align:center;padding:.75rem 0">
+    <div style="font-size:2.2rem;font-weight:600;color:${c===3?'#3b6d11':c>=2?'var(--pink-600)':'var(--pink-800)'}">${c}/3</div>
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem">${msg}</p>
+  </div>
+  ${quizState.answers.map((a,i)=>`<div style="padding:.5rem 0;border-bottom:1px solid var(--pink-50)">
+    <p style="font-size:.72rem;color:var(--text-muted)">Q${i+1}: ${a.q}</p>
+    <p style="font-size:.82rem;margin-top:3px">
+      <span style="color:${a.correct?'#3b6d11':'var(--pink-600)'}">  ${a.correct?'○':'✕'}</span> あなた：${a.ans}
+      ${!a.correct?'<span style="color:var(--text-muted)"> → 正解：'+a.model+'</span>':''}
+    </p>
+  </div>`).join('')}
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:1rem">
+    <button class="btn-ghost" onclick="renderQuizStart()">別の単語</button>
+    <button class="btn-primary" onclick="startWordQuiz(null,${e.id})">もう一度</button>
+  </div>`;
+}
+
+// ── VOICE ──
+function toggleVoice() {
+  if (isRecording) { stopVoice(); return; }
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) { alert('このブラウザは音声入力に対応していません。Chromeをお使いください。'); return; }
+  const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR(); recognition.lang='ko-KR'; recognition.interimResults=false;
+  recognition.onresult=ev=>{document.getElementById('inp-kor').value=ev.results[0][0].transcript;stopVoice();};
+  recognition.onerror=()=>stopVoice(); recognition.onend=()=>stopVoice();
+  recognition.start(); isRecording=true;
+  const b=document.getElementById('voice-btn');
+  b.classList.add('recording');
+  b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> 録音中…';
+}
+function stopVoice() {
+  isRecording=false; if(recognition){try{recognition.stop();}catch(e){}recognition=null;}
+  const b=document.getElementById('voice-btn');
+  if(b){b.classList.remove('recording');b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';}
+}
+
+// ── EXPORT / IMPORT ──
+function exportJSON() {
+  if (!entries.length) { toast('単語がありません'); return; }
+  const blob=new Blob([JSON.stringify(entries,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='한국어노트_'+new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'-')+'.json';
+  a.click(); URL.revokeObjectURL(a.href); toast('JSONを保存しました 📁');
+}
+function exportCSV() {
+  if (!entries.length) { toast('単語がありません'); return; }
+  const rows=entries.map(e=>[e.kor,e.jp||'',e.type||'',(e.memo||'').replace(/,/g,'／'),(e.examples||[]).join('｜'),e.date].map(v=>'"'+v+'"').join(','));
+  const blob=new Blob(['\uFEFF'+'韓国語,日本語,種類,メモ,例文,登録日\n'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='한국어노트.csv'; a.click(); URL.revokeObjectURL(a.href); toast('CSVを保存しました 📊');
+}
+function exportText() {
+  if (!entries.length) { toast('単語がありません'); return; }
+  const byType={};
+  [...entries].sort((a,b)=>a.kor.localeCompare(b.kor,'ko')).forEach(e=>{ const t=e.type||'その他'; if(!byType[t])byType[t]=[]; byType[t].push(e); });
+  let txt='나만의 한국어 노트\n作成日：'+new Date().toLocaleDateString('ja-JP')+'\n合計：'+entries.length+'件\n\n';
+  Object.entries(byType).forEach(([type,arr])=>{ txt+='━━━ '+type+' ('+arr.length+') ━━━\n'; arr.forEach(e=>{ txt+='▶ '+e.kor+'\n'; if(e.jp)txt+='  意味：'+e.jp+'\n'; if(e.memo)txt+='  メモ：'+e.memo+'\n'; (e.examples||[]).forEach(x=>txt+='  例文：'+x+'\n'); txt+='\n'; }); });
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='한국어노트.txt'; a.click(); URL.revokeObjectURL(a.href); toast('テキストを保存しました 📄');
+}
+function importJSON(ev) {
+  const file=ev.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{ try { const d=JSON.parse(e.target.result); if(!Array.isArray(d)){toast('ファイル形式が正しくありません');return;} const ex=new Set(entries.map(x=>x.id)); const nw=d.filter(x=>!ex.has(x.id)); entries=[...entries,...nw]; save(); renderList(); toast(nw.length+'件を追加しました 🌸'); } catch{toast('読み込みに失敗しました');} };
+  r.readAsText(file); ev.target.value='';
+}
+
+load(); renderRecent();
+</script>
+</body>
+</html>
